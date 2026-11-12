@@ -1,0 +1,8 @@
+<h2>To do for {{ user.username }}</h2>
+{% for t in task_list %}
+  <p>{{ t.text }}</p>
+  <a>[{{ t.tag }}] by {{user.username}}</a>
+  <p>_________________</p>
+{% empty %}
+  <p>No tasks yet.</p>
+{% endfor %}
