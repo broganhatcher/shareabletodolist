@@ -1,3 +1,10 @@
+{% if user.is_authenticated %}
+  <form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Log Out</button>
+  </form>
+{% endif %}
+
 <h2>To do for {{ user.username }}</h2>
 {% for t in task_list %}
   <p>{{ t.text }}</p>

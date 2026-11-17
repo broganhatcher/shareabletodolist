@@ -3,6 +3,11 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.shortcuts import render
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.shortcuts import redirect
+
+
 from .forms import TaskForm
 from .models import task
 
@@ -25,4 +30,14 @@ class taskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return task.objects.filter(author=self.request.user)
-    
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('tasklist')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
