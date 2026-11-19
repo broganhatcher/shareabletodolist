@@ -4,8 +4,10 @@
     <button type="submit">Log Out</button>
   </form>
 {% endif %}
-
 <h2>To do for {{ user.username }}</h2>
+<form action="{% url 'newtask' %}" method="get">
+  <button type="submit">Create New Task</button>
+</form>
 {% for t in task_list %}
   <p>{{ t.text }}</p>
   <a>[{{ t.tag }}] by {{user.username}}</a>
