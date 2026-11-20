@@ -4,14 +4,35 @@
     <button type="submit">Log Out</button>
   </form>
 {% endif %}
+
 <h2>To do for {{ user.username }}</h2>
+
 <form action="{% url 'newtask' %}" method="get">
-  <button type="submit">Create New Task</button>
+  <button type="submit">New Task</button>
 </form>
+
 {% for t in task_list %}
   <p>{{ t.text }}</p>
-  <a>[{{ t.tag }}] by {{user.username}}</a>
-  <p>_________________</p>
+  <span>[{{ t.tag }}] by {{ t.author.username }}</span>
+
+  {% if t.author == user %}
+    {% if t.viewers.exists %}
+      <strong>[shared with {{ t.viewers.count }}]</strong>
+    {% endif %}
+
+    <form method="get" action="{% url 'sharetask' t.pk %}" style="display:inline">
+      <button type="submit">Share</button>
+    </form>
+
+    <form method="post" action="{% url 'deletetask' t.pk %}" style="display:inline">
+      {% csrf_token %}
+      <button type="submit">Delete</button>
+    </form>
+  {% else %}
+    <strong>[Shared by {{ t.author.username }}]</strong>
+  {% endif %}
+
+  <hr>
 {% empty %}
   <p>No tasks yet.</p>
 {% endfor %}

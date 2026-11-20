@@ -18,3 +18,9 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ("username", "display_name", "bio")
+
+class ShareTaskForm(forms.Form):
+    username = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={"placeholder": "Username to share with"}),
+    )

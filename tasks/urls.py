@@ -11,6 +11,9 @@ urlpatterns = [
         path('register/', views.register, name='register'),
         path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
         path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+        path("tasks/<int:pk>/delete/", views.taskDeleteView.as_view(), name="deletetask"),
+        path("tasks/<int:pk>/share/", views.share_task, name="sharetask"),
+        path("tasks/<int:pk>/unshare/<int:user_id>/", views.unshare_task, name="unsharetask"),
 
 
 ]

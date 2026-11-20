@@ -1,0 +1,20 @@
+<h2>Share: {{ task.text }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add viewer</button>
+</form>
+
+<h3>Current viewers</h3>
+{% for v in task.viewers.all %}
+  <form method="post" action="{% url 'unsharetask' task.pk v.pk %}" style="display:inline">
+    {% csrf_token %}
+    {{ v.username }}
+    <button type="submit">Remove</button>
+  </form>
+{% empty %}
+  <p>Not shared with anyone.</p>
+{% endfor %}
+
+<a href="{% url 'tasklist' %}">Back</a>
