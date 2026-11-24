@@ -7,13 +7,21 @@
 
 <h2>To do for {{ user.username }}</h2>
 
-<form action="{% url 'newtask' %}" method="get">
+<form action="{% url 'newtask' %}" method="get" style="display:inline">
   <button type="submit">New Task</button>
+</form>
+
+<form action="{% url 'group_list' %}" method="get" style="display:inline">
+  <button type="submit">My Groups</button>
 </form>
 
 {% for t in task_list %}
   <p>{{ t.text }}</p>
   <span>[{{ t.tag }}] by {{ t.author.username }}</span>
+
+  {% if t.group %}
+    <strong>[Group: {{ t.group.name }}]</strong>
+  {% endif %}
 
   {% if t.author == user %}
     {% if t.viewers.exists %}
