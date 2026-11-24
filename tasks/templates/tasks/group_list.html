@@ -1,0 +1,32 @@
+<h2>My Groups</h2>
+
+<form action="{% url 'group_create' %}" method="get" style="display:inline">
+  <button type="submit">New Group</button>
+</form>
+
+<form action="{% url 'tasklist' %}" method="get" style="display:inline">
+  <button type="submit">Back to Tasks</button>
+</form>
+
+{% for group in object_list %}
+  <p><strong>{{ group.name }}</strong> (Owner: {{ group.owner.username }})</p>
+  <span>Members: {{ group.members.count }}</span>
+
+  {% if group.owner == user %}
+    <form action="{% url 'manage_group' group.pk %}" method="get" style="display:inline">
+      <button type="submit">Manage Members</button>
+    </form>
+
+    <form action="{% url 'delete_group' group.pk %}" method="get" style="display:inline">
+      <button type="submit">Delete</button>
+    </form>
+  {% else %}
+    <form method="post" action="{% url 'leave_group' group.pk %}" style="display:inline">
+      {% csrf_token %}
+      <button type="submit">Leave</button>
+    </form>
+  {% endif %}
+  <hr>
+{% empty %}
+  <p>You are not in any groups yet.</p>
+{% endfor %}

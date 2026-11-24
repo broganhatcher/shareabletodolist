@@ -4,4 +4,11 @@
   {{ form.as_p }}
   <button type="submit">Save</button>
 </form>
+<<<<<<< HEAD
 {% if project %}<a href="{% url 'listdetail' project.pk %}">Back</a>{% endif %}
+=======
+
+<form action="{% url 'tasklist' %}" method="get" style="display:inline">
+  <button type="submit">Back</button>
+</form>
+>>>>>>> task-groups
