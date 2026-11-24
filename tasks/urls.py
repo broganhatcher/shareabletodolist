@@ -16,4 +16,10 @@ urlpatterns = [
         path("tasks/<int:pk>/unshare/<int:user_id>/", views.unshare_task, name="unsharetask"),
 
 
+    path("lists/", views.project_lists, name="projectlists"),
+    path("lists/new/", views.create_list, name="newlist"),
+    path("lists/<int:pk>/", views.list_detail, name="listdetail"),
+    path("lists/<int:pk>/share/", views.share_list, name="sharelist"),
+    path("lists/<int:pk>/tasks/new/", views.create_project_task, name="newprojecttask"),
+    path("lists/<int:pk>/tasks/<int:task_id>/delete/", views.delete_project_task, name="deleteprojecttask"),
 ]

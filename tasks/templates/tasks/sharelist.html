@@ -1,0 +1,5 @@
+<h2>Share {{ project.name }}</h2>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Add Member</button></form>
+<h3>Current Members</h3>
+{% for member in project.members.all %}<p>{{ member.username }}</p>{% empty %}<p>No additional members yet.</p>{% endfor %}
+<a href="{% url 'listdetail' project.pk %}">Back</a>

@@ -1,0 +1,10 @@
+<h2>My Project Lists</h2>
+<a href="{% url 'tasklist' %}">Personal Tasks</a>
+<a href="{% url 'newlist' %}">Create List</a>
+{% for project in lists %}
+<hr>
+<h3><a href="{% url 'listdetail' project.pk %}">{{ project.name }}</a></h3>
+<p>Owner: {{ project.owner.username }}</p>
+<p>Tasks: {{ project.tasks.count }}</p>
+{% if project.owner == user %}<p>Owned by you</p>{% else %}<p>Shared with you</p>{% endif %}
+{% empty %}<p>No project lists yet.</p>{% endfor %}

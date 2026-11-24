@@ -1,6 +1,7 @@
-<h2>New task</h2>
+{% if project %}<h2>New task for {{ project.name }}</h2>{% else %}<h2>New task</h2>{% endif %}
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Save</button>
 </form>
+{% if project %}<a href="{% url 'listdetail' project.pk %}">Back</a>{% endif %}
