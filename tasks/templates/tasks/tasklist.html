@@ -7,6 +7,8 @@
 
 <h2>To do for {{ user.username }}</h2>
 
+<a href="{% url 'projectlists' %}">Project Lists</a>
+
 <form action="{% url 'newtask' %}" method="get">
   <button type="submit">New Task</button>
 </form>
