@@ -1,0 +1,4 @@
+<h2>Delete {{ project.name }}?</h2>
+<p>This permanently deletes the list and all its tasks for everyone.</p>
+<form method="post">{% csrf_token %}<button type="submit">Confirm Delete</button></form>
+<a href="{% url 'listdetail' project.pk %}">Cancel</a>

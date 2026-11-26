@@ -2,7 +2,7 @@
 <p>Owner: {{ project.owner.username }}</p>
 <a href="{% url 'projectlists' %}">Back to Lists</a>
 <a href="{% url 'newprojecttask' project.pk %}">New Task</a>
-{% if project.owner == user %}<a href="{% url 'sharelist' project.pk %}">Share List</a>{% endif %}
+{% if project.owner == user %}<a href="{% url 'sharelist' project.pk %}">Share List</a> <a href="{% url 'deletelist' project.pk %}">Delete List</a>{% else %}<form method="post" action="{% url 'leavelist' project.pk %}">{% csrf_token %}<button type="submit">Leave List</button></form>{% endif %}
 <h3>Members</h3>
 <p>{{ project.owner.username }} (Owner)</p>
 {% for member in project.members.all %}<p>{{ member.username }}</p>{% endfor %}

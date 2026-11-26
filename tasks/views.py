@@ -1,22 +1,18 @@
+from django.views.decorators.http import require_POST
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DeleteView
 from django.shortcuts import render
 
-from .forms import CustomUserCreationForm, ShareTaskForm, TaskForm
+from .forms import CustomUserCreationForm, ShareTaskForm
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Q
 
-<<<<<<< HEAD
 
 from .forms import TaskForm, TaskListForm, ShareListForm
 from .models import task, TaskList
-=======
-from .forms import AddGroupMemberForm 
-from .models import task, TaskGroup
->>>>>>> task-groups
 
 User = get_user_model()
 
@@ -27,11 +23,6 @@ class taskCreateView(LoginRequiredMixin, CreateView):
     model = task
     form_class = TaskForm
     template_name = "tasks/newtask.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -47,14 +38,7 @@ class taskListView(LoginRequiredMixin, ListView):
     template_name = "tasks/tasklist.html"
 
     def get_queryset(self):
-<<<<<<< HEAD
         return task.objects.filter(Q(author=self.request.user) | Q(viewers=self.request.user), task_list__isnull=True
-=======
-        return task.objects.filter(
-            Q(author=self.request.user) |
-            Q(viewers=self.request.user) |
-            Q(group__members=self.request.user)
->>>>>>> task-groups
         ).distinct()
 
 def register(request):
@@ -112,7 +96,6 @@ def leave_task(request, pk):
     return redirect("tasklist")
 
 
-<<<<<<< HEAD
 def accessible_lists(user):
     return TaskList.objects.filter(Q(owner=user) | Q(members=user)).distinct()
 
@@ -175,63 +158,31 @@ def delete_project_task(request, pk, task_id):
     if request.method == "POST":
         selected_task.delete()
     return redirect("listdetail", pk=pk)
-=======
-class GroupCreateView(LoginRequiredMixin, CreateView):
-    model = TaskGroup
-    fields = ['name', 'members']
-    template_name = 'tasks/group_form.html'
-    success_url = reverse_lazy('group_list')
-
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        response = super().form_valid(form)
-        self.object.members.add(self.request.user)
-        return response
-
-class GroupListView(LoginRequiredMixin, ListView):
-    model = TaskGroup
-    template_name = 'tasks/group_list.html'
-
-    def get_queryset(self):
-        return self.request.user.task_groups.all()
 
 
 @login_required
-def manage_group(request, pk):
-    group = get_object_or_404(TaskGroup, pk=pk, owner=request.user)
+@require_POST
+def remove_list_member(request, pk, user_id):
+    project = get_object_or_404(TaskList, pk=pk, owner=request.user)
+    if user_id != project.owner_id:
+        project.members.remove(user_id)
+    return redirect("sharelist", pk=pk)
+
+
+@login_required
+@require_POST
+def leave_list(request, pk):
+    project = get_object_or_404(TaskList, pk=pk, members=request.user)
+    if project.owner_id == request.user.pk:
+        return redirect("listdetail", pk=pk)
+    project.members.remove(request.user)
+    return redirect("projectlists")
+
+
+@login_required
+def delete_list(request, pk):
+    project = get_object_or_404(TaskList, pk=pk, owner=request.user)
     if request.method == "POST":
-        form = AddGroupMemberForm(request.POST)
-        if form.is_valid():
-            try:
-                member = User.objects.get(username=form.cleaned_data["username"])
-            except User.DoesNotExist:
-                form.add_error("username", "No user with that username.")
-            else:
-                group.members.add(member)
-                return redirect("manage_group", pk=group.pk)
-    else:
-        form = AddGroupMemberForm()
-    return render(request, "tasks/manage_group.html", {"form": form, "group": group})
-
-@login_required
-def remove_group_member(request, pk, user_id):
-    group = get_object_or_404(TaskGroup, pk=pk, owner=request.user)
-    if request.method == "POST" and user_id != group.owner.id:
-        group.members.remove(user_id)
-    return redirect("manage_group", pk=group.pk)
-
-@login_required
-def leave_group(request, pk):
-    group = get_object_or_404(TaskGroup, pk=pk, members=request.user)
-    if request.method == "POST" and group.owner != request.user:
-        group.members.remove(request.user)
-    return redirect("group_list")
-
-class GroupDeleteView(LoginRequiredMixin, DeleteView):
-    model = TaskGroup
-    template_name = "tasks/delete_group.html"
-    success_url = reverse_lazy("group_list")
-
-    def get_queryset(self):
-        return TaskGroup.objects.filter(owner=self.request.user)
->>>>>>> task-groups
+        project.delete()
+        return redirect("projectlists")
+    return render(request, "tasks/delete_list.html", {"project": project})
